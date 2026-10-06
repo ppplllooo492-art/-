@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>∆ UNIVERSAL AUDIO STATION</title>
+
+<style>
+:root {
+    --neon-glow: #00f0ff;
+    --neon-pink: #ff007f;
+    --neon-purple: #9400d3;
+    --dark-bg: #0a0512;
+    --panel-bg: rgba(20, 10, 35, 0.78);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    user-select: none;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, #21052f 0%, #0a0512 45%, #030207 100%);
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 900px) {
+    .app-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.panel {
+    background: var(--panel-bg);
+    border: 2px solid var(--neon-pink);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow:
+        0 0 15px rgba(255, 0, 127, 0.15),
+        inset 0 0 20px rgba(148, 0, 211, 0.08);
+    backdrop-filter: blur(10px);
+}
+
+.brand-header {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: clamp(1.7rem, 5vw, 2.5rem);
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-shadow:
+        0 0 10px var(--neon-pink),
+        0 0 20px var(--neon-glow);
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-top: -5px;
+}
+
+h2 {
+    font-size: 1.05rem;
+    color: var(--neon-glow);
+    border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+    padding-bottom: 7px;
+    text-transform: uppercase;
+}
+
+.search-box {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--neon-pink);
+    padding: 11px;
+    border-radius: 8px;
+    color: #fff;
+    outline: none;
+}
+
+input[type="text"]:focus {
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+}
+
+button {
+    background: linear-gradient(
+        45deg,
+        var(--neon-pink),
+        var(--neon-purple)
+    );
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+}
+
+button:active {
+    transform: scale(0.96);
+}
+
+.song-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 3px;
+}
+
+.song-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.song-list::-webkit-scrollbar-thumb {
+    background: var(--neon-pink);
+    border-radius: 10px;
+}
+
+.song-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 9px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.song-item:hover {
+    background: rgba(255, 0, 127, 0.12);
+    border-color: var(--neon-pink);
+}
+
+.song-item.active {
+    border-color: var(--neon-glow);
+    background: rgba(0, 240, 255, 0.1);
+}
+
+.song-item img {
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.song-info {
+    min-width: 0;
+}
+
+.song-title {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-artist {
+    font-size: 0.72rem;
+    color: #888;
+    margin-top: 3px;
+}
+
+.center-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+}
+
+.now-playing {
+    width: 100%;
+}
+
+.now-playing-title {
+    font-size: 1.15rem;
+    color: var(--neon-glow);
+    font-weight: bold;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.now-playing-artist {
+    color: #999;
+    font-size: 0.85rem;
+}
+
+.vinyl-wrapper {
+    width: 220px;
+    height: 220px;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            #080808 0px,
+            #171717 2px,
+            #050505 4px
+        );
+
+    border-radius: 50%;
+    border: 5px solid #333;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow:
+        0 0 20px var(--neon-pink),
+        0 0 40px rgba(0, 240, 255, 0.15);
+
+    animation: spin 4s linear infinite;
+    animation-play-state: paused;
+}
+
+.vinyl-wrapper::before {
+    content: "";
+    position: absolute;
+}
+
+.vinyl-center {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(
+        135deg,
+        var(--neon-pink),
+        var(--neon-glow)
+    );
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 0 20px var(--neon-pink);
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-ctrl {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.visualizer {
+    width: 100%;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 0.82rem;
+}
+
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.value {
+    color: var(--neon-glow);
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--neon-pink);
+    cursor: pointer;
+}
+
+.era-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn-era {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+    color: #fff;
+    padding: 9px 5px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-era.active {
+    background: var(--neon-pink);
+    border-color: var(--neon-glow);
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+}
+
+.status {
+    text-align: center;
+    color: #777;
+    font-size: 0.75rem;
+}
+
+.loading {
+    text-align: center;
+    padding: 15px;
+    color: var(--neon-glow);
+}
+
+.error {
+    text-align: center;
+    padding: 15px;
+    color: #ff4d6d;
+}
+
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+}
+
+.footer {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #555;
+    font-size: 0.7rem;
+    padding: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- HEADER -->
+    <div class="brand-header">
+        @∆ UNIVERSAL AUDIO STATION
+    </div>
+
+    <div class="subtitle">
+        🌐 GLOBAL MUSIC HUB
+    </div>
+
+    <!-- LEFT PANEL -->
+    <div class="panel">
+
+        <h2>🔎 MUSIC SEARCH</h2>
+
+        <div class="search-box">
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="พิมพ์ชื่อเพลงหรือศิลปิน..."
+                autocomplete="off"
+            >
+
+            <button id="btnSearch">
+                ค้นหา
+            </button>
+        </div>
+
+        <div class="song-list" id="trackContainer">
+            <div class="empty">
+                🎵 พิมพ์ชื่อเพลงที่ชอบแล้วกดค้นหา
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CENTER PLAYER -->
+    <div class="panel">
+
+        <h2>💿 NOW PLAYING</h2>
+
+        <div class="center-player">
+
+            <div class="vinyl-wrapper" id="vinyl">
+                <div class="vinyl-center">
+                    @∆
+                </div>
+            </div>
+
+            <div class="now-playing">
+                <div
+                    class="now-playing-title"
+                    id="mainTitle"
+                >
+                    โปรดเลือกเพลง
+                </div>
+
+                <div
+                    class="now-playing-artist"
+                    id="mainArtist"
+                >
+                    คลังเพลงสากลระดับโลก
+                </div>
+            </div>
+
+            <div class="controls">
+
+                <button
+                    class="btn-ctrl"
+                    id="btnPrev"
+                    title="เพลงก่อนหน้า"
+                >
+                    ⏮
+                </button>
+
+                <button
+                    class="btn-ctrl"
+                    id="btnPlay"
+                    title="เล่น / หยุด"
+                >
+                    ▶
+                </button>
+
+                <button
+                    class="btn-ctrl"
+                    id="btnNext"
+                    title="เพลงถัดไป"
+                >
+                    ⏭
+                </button>
+
+            </div>
+
+            <canvas
+                class="visualizer"
+                id="visualizer"
+            ></canvas>
+
+            <div
+                class="status"
+                id="status"
+            >
+                พร้อมใช้งาน
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel">
+
+        <h2>🎛️ STUDIO AUDIO FX</h2>
+
+        <!-- VOLUME -->
+        <div class="slider-group">
+
+            <div class="slider-header">
+                <span>🔊 VOLUME</span>
+                <span
+                    class="value"
+                    id="volumeValue"
+                >
+                    100%
+                </span>
+            </div>
+
+            <input
+                id="volSlider"
+                type="range"
+                min="0"
+                max="100"
+                value="100"
+            >
+
+        </div>
+
+        <!-- SPEED -->
+        <div class="slider-group">
+
+            <div class="slider-header">
+                <span>🚀 SPEED</span>
+                <span
+                    class="value"
+                    id="speedValue"
+                >
+                    100%
+                </span>
+            </div>
+
+            <input
+                id="speedSlider"
+                type="range"
+                min="50"
+                max="200"
+                value="100"
+            >
+
+        </div>
+
+        <h2>📻 TIME-TRAVEL FILTER</h2>
+
+        <div class="era-grid">
+
+            <button
+                class="btn-era active"
+                data-era="modern"
+            >
+                💿 MODERN HD
+            </button>
+
+            <button
+                class="btn-era"
+                data-era="1920"
+            >
+                📻 GRAMOPHONE
+            </button>
+
+            <button
+                class="btn-era"
+                data-era="1980"
+            >
+                📺 CASSETTE
+            </button>
+
+            <button
+                class="btn-era"
+                data-era="future"
+            >
+                🚀 HYPER BASS
+            </button>
+
+        </div>
+
+        <h2>⚡ AUDIO INFO</h2>
+
+        <div class="status">
+            Web Audio Engine
+        </div>
+
+        <div class="status">
+            Real-time Visualizer
+        </div>
+
+        <div class="status">
+            Preview Music Player
+        </div>
+
+    </div>
+
+    <div class="footer">
+        @∆ UNIVERSAL AUDIO STATION • Web Audio Edition
+    </div>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+/* =========================================================
+   AUDIO SYSTEM
+========================================================= */
+
+let audioCtx = null;
+let audio = new Audio();
+
+audio.crossOrigin = "anonymous";
+audio.preload = "metadata";
+
+let sourceNode = null;
+let gainNode = null;
+let filterNode = null;
+let visualizerNode = null;
+
+let currentTracks = [];
+let currentIndex = 0;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const btnPlay =
+    document.getElementById("btnPlay");
+
+const btnNext =
+    document.getElementById("btnNext");
+
+const btnPrev =
+    document.getElementById("btnPrev");
+
+const vinyl =
+    document.getElementById("vinyl");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const btnSearch =
+    document.getElementById("btnSearch");
+
+const trackContainer =
+    document.getElementById("trackContainer");
+
+const mainTitle =
+    document.getElementById("mainTitle");
+
+const mainArtist =
+    document.getElementById("mainArtist");
+
+const volSlider =
+    document.getElementById("volSlider");
+
+const speedSlider =
+    document.getElementById("speedSlider");
+
+const volumeValue =
+    document.getElementById("volumeValue");
+
+const speedValue =
+    document.getElementById("speedValue");
+
+const statusText =
+    document.getElementById("status");
+
+const canvas =
+    document.getElementById("visualizer");
+
+const ctx =
+    canvas.getContext("2d");
+
+
+/* =========================================================
+   AUDIO INITIALIZATION
+========================================================= */
+
+function initAudio() {
+
+    if (audioCtx) {
+        return;
+    }
+
+    const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+    if (!AudioContext) {
+
+        statusText.textContent =
+            "❌ Browser ไม่รองรับ Web Audio";
+
+        return;
+    }
+
+    audioCtx = new AudioContext();
+
+    sourceNode =
+        audioCtx.createMediaElementSource(audio);
+
+    gainNode =
+        audioCtx.createGain();
+
+    filterNode =
+        audioCtx.createBiquadFilter();
+
+    visualizerNode =
+        audioCtx.createAnalyser();
+
+    filterNode.type = "allpass";
+
+    filterNode.frequency.value = 350;
+
+    visualizerNode.fftSize = 256;
+
+    visualizerNode.smoothingTimeConstant = 0.8;
+
+    sourceNode.connect(filterNode);
+
+    filterNode.connect(gainNode);
+
+    gainNode.connect(visualizerNode);
+
+    visualizerNode.connect(
+        audioCtx.destination
+    );
+
+    gainNode.gain.value =
+        Number(volSlider.value) / 100;
+
+    startVisualizer();
+}
+
+
+/* =========================================================
+   SEARCH MUSIC
+========================================================= */
+
+async function searchMusic(query) {
+
+    if (!query) {
+        return;
+    }
+
+    trackContainer.innerHTML = `
+        <div class="loading">
+            📡 กำลังค้นหาเพลง...
+        </div>
+    `;
+
+    statusText.textContent =
+        "กำลังค้นหา...";
+
+    try {
+
+        /*
+         * Apple iTunes Search API
+         * แก้จาก URL เดิมที่ผิด
+         */
+
+        const url =
+            "https://itunes.apple.com/search" +
+            "?term=" +
+            encodeURIComponent(query) +
+            "&limit=20" +
+            "&media=music";
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        const data =
+            await response.json();
+
+        currentTracks =
+            (data.results || []).filter(
+                track => track.previewUrl
+            );
+
+        currentIndex = 0;
+
+        renderTracks();
+
+        if (currentTracks.length === 0) {
+
+            trackContainer.innerHTML = `
+                <div class="empty">
+                    😔 ไม่พบเพลงที่มี Preview
+                </div>
+            `;
+
+            statusText.textContent =
+                "ไม่พบเพลง";
+
+            return;
+        }
+
+        statusText.textContent =
+            `พบ ${currentTracks.length} เพลง`;
+
+    } catch (error) {
+
+        console.error(
+            "Search error:",
+            error
+        );
+
+        trackContainer.innerHTML = `
+            <div class="error">
+                ❌ เชื่อมต่อคลังเพลงไม่สำเร็จ
+                <br>
+                <small>
+                    กรุณาลองค้นหาใหม่
+                </small>
+            </div>
+        `;
+
+        statusText.textContent =
+            "เกิดข้อผิดพลาด";
+    }
+}
+
+
+/* =========================================================
+   RENDER TRACKS
+========================================================= */
+
+function renderTracks() {
+
+    trackContainer.innerHTML = "";
+
+    currentTracks.forEach(
+        (track, index) => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "song-item";
+
+            item.dataset.index =
+                index;
+
+            const artwork =
+                track.artworkUrl100 ||
+                "";
+
+            const title =
+                escapeHTML(
+                    track.trackName ||
+                    "Unknown Track"
+                );
+
+            const artist =
+                escapeHTML(
+                    track.artistName ||
+                    "Unknown Artist"
+                );
+
+            item.innerHTML = `
+                <img
+                    src="${artwork}"
+                    alt=""
+                    loading="lazy"
+                >
+
+                <div class="song-info">
+
+                    <div class="song-title">
+                        ${title}
+                    </div>
+
+                    <div class="song-artist">
+                        ${artist}
+                    </div>
+
+                </div>
+            `;
+
+            item.addEventListener(
+                "click",
+                () => playTrack(index)
+            );
+
+            trackContainer.appendChild(item);
+        }
+    );
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   PLAY TRACK
+========================================================= */
+
+async function playTrack(index) {
+
+    if (
+        index < 0 ||
+        index >= currentTracks.length
+    ) {
+        return;
+    }
+
+    initAudio();
+
+    if (!audioCtx) {
+        return;
+    }
+
+    if (audioCtx.state === "suspended") {
+
+        try {
+            await audioCtx.resume();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    currentIndex = index;
+
+    const track =
+        currentTracks[index];
+
+    if (!track.previewUrl) {
+        return;
+    }
+
+    audio.pause();
+
+    audio.src =
+        track.previewUrl;
+
+    audio.currentTime = 0;
+
+    mainTitle.textContent =
+        track.trackName ||
+        "Unknown Track";
+
+    mainArtist.textContent =
+        track.artistName ||
+        "Unknown Artist";
+
+    updateActiveTrack();
+
+    try {
+
+        await audio.play();
+
+        btnPlay.textContent =
+            "⏸";
+
+        vinyl.style.animationPlayState =
+            "running";
+
+        statusText.textContent =
+            "กำลังเล่นเพลง";
+
+    } catch (error) {
+
+        console.error(
+            "Playback error:",
+            error
+        );
+
+        statusText.textContent =
+            "❌ ไม่สามารถเล่น Preview ได้";
+    }
+}
+
+
+/* =========================================================
+   ACTIVE TRACK
+========================================================= */
+
+function updateActiveTrack() {
+
+    document
+        .querySelectorAll(".song-item")
+        .forEach(item => {
+
+            item.classList.remove("active");
+
+            if (
+                Number(item.dataset.index) ===
+                currentIndex
+            ) {
+                item.classList.add("active");
+
+                item.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+            }
+        });
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+========================================================= */
+
+btnPlay.addEventListener(
+    "click",
+    async () => {
+
+        if (!audio.src) {
+            return;
+        }
+
+        initAudio();
+
+        if (
+            audioCtx &&
+            audioCtx.state === "suspended"
+        ) {
+            await audioCtx.resume();
+        }
+
+        if (audio.paused) {
+
+            try {
+
+                await audio.play();
+
+                btnPlay.textContent =
+                    "⏸";
+
+                vinyl.style.animationPlayState =
+                    "running";
+
+                statusText.textContent =
+                    "กำลังเล่นเพลง";
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+
+        } else {
+
+            audio.pause();
+
+            btnPlay.textContent =
+                "▶";
+
+            vinyl.style.animationPlayState =
+                "paused";
+
+            statusText.textContent =
+                "หยุดชั่วคราว";
+        }
+    }
+);
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+btnNext.addEventListener(
+    "click",
+    () => {
+
+        if (currentTracks.length === 0) {
+            return;
+        }
+
+        const nextIndex =
+            (currentIndex + 1) %
+            currentTracks.length;
+
+        playTrack(nextIndex);
+    }
+);
+
+
+/* =========================================================
+   PREVIOUS
+========================================================= */
+
+btnPrev.addEventListener(
+    "click",
+    () => {
+
+        if (currentTracks.length === 0) {
+            return;
+        }
+
+        const prevIndex =
+            (
+                currentIndex -
+                1 +
+                currentTracks.length
+            ) %
+            currentTracks.length;
+
+        playTrack(prevIndex);
+    }
+);
+
+
+/* =========================================================
+   SEARCH BUTTON
+========================================================= */
+
+btnSearch.addEventListener(
+    "click",
+    () => {
+
+        const query =
+            searchInput.value.trim();
+
+        if (query) {
+            searchMusic(query);
+        }
+    }
+);
+
+
+/* =========================================================
+   ENTER SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            btnSearch.click();
+        }
+    }
+);
+
+
+/* =========================================================
+   VOLUME
+========================================================= */
+
+volSlider.addEventListener(
+    "input",
+    event => {
+
+        const value =
+            Number(event.target.value);
+
+        volumeValue.textContent =
+            value + "%";
+
+        if (gainNode) {
+
+            gainNode.gain.value =
+                value / 100;
+        }
+    }
+);
+
+
+/* =========================================================
+   SPEED
+========================================================= */
+
+speedSlider.addEventListener(
+    "input",
+    event => {
+
+        const value =
+            Number(event.target.value);
+
+        speedValue.textContent =
+            value + "%";
+
+        audio.playbackRate =
+            value / 100;
+    }
+);
+
+
+/* =========================================================
+   ERA FILTER
+========================================================= */
+
+document
+    .querySelectorAll(".btn-era")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                initAudio();
+
+                document
+                    .querySelectorAll(".btn-era")
+                    .forEach(btn => {
+                        btn.classList.remove(
+                            "active"
+                        );
+                    });
+
+                button.classList.add(
+                    "active"
+                );
+
+                const era =
+                    button.dataset.era;
+
+                if (!filterNode) {
+                    return;
+                }
+
+                /*
+                 * Reset filter
+                 */
+
+                filterNode.type =
+                    "allpass";
+
+                filterNode.frequency.value =
+                    350;
+
+                filterNode.gain.value =
+                    0;
+
+                /*
+                 * 1920s
+                 */
+
+                if (era === "1920") {
+
+                    filterNode.type =
+                        "bandpass";
+
+                    filterNode.frequency.value =
+                        1500;
+
+                    filterNode.Q.value =
+                        0.8;
+
+                    statusText.textContent =
+                        "📻 Gramophone Mode";
+
+                }
+
+                /*
+                 * 1980s
+                 */
+
+                else if (era === "1980") {
+
+                    filterNode.type =
+                        "lowpass";
+
+                    filterNode.frequency.value =
+                        3000;
+
+                    filterNode.Q.value =
+                        0.7;
+
+                    statusText.textContent =
+                        "📺 Cassette Mode";
+
+                }
+
+                /*
+                 * Future / Bass
+                 */
+
+                else if (era === "future") {
+
+                    filterNode.type =
+                        "lowshelf";
+
+                    filterNode.frequency.value =
+                        120;
+
+                    filterNode.gain.value =
+                        10;
+
+                    statusText.textContent =
+                        "🚀 Hyper Bass Mode";
+
+                }
+
+                /*
+                 * Modern
+                 */
+
+                else {
+
+                    filterNode.type =
+                        "allpass";
+
+                    statusText.textContent =
+                        "💿 Modern HD Mode";
+                }
+            }
+        );
+    });
+
+
+/* =========================================================
+   AUDIO EVENTS
+========================================================= */
+
+audio.addEventListener(
+    "ended",
+    () => {
+
+        if (currentTracks.length > 0) {
+
+            const nextIndex =
+                (currentIndex + 1) %
+                currentTracks.length;
+
+            playTrack(nextIndex);
+
+        } else {
+
+            btnPlay.textContent =
+                "▶";
+
+            vinyl.style.animationPlayState =
+                "paused";
+        }
+    }
+);
+
+
+audio.addEventListener(
+    "play",
+    () => {
+
+        btnPlay.textContent =
+            "⏸";
+
+        vinyl.style.animationPlayState =
+            "running";
+    }
+);
+
+
+audio.addEventListener(
+    "pause",
+    () => {
+
+        btnPlay.textContent =
+            "▶";
+
+        vinyl.style.animationPlayState =
+            "paused";
+    }
+);
+
+
+audio.addEventListener(
+    "error",
+    () => {
+
+        statusText.textContent =
+            "❌ โหลดเสียงไม่สำเร็จ";
+
+        vinyl.style.animationPlayState =
+            "paused";
+
+        btnPlay.textContent =
+            "▶";
+    }
+);
+
+
+/* =========================================================
+   VISUALIZER
+========================================================= */
+
+function startVisualizer() {
+
+    function draw() {
+
+        requestAnimationFrame(draw);
+
+        if (!visualizerNode) {
+            return;
+        }
+
+        const bufferLength =
+            visualizerNode.frequencyBinCount;
+
+        const dataArray =
+            new Uint8Array(bufferLength);
+
+        visualizerNode.getByteFrequencyData(
+            dataArray
+        );
+
+        const width =
+            canvas.clientWidth;
+
+        const height =
+            canvas.clientHeight;
+
+        if (
+            canvas.width !== width ||
+            canvas.height !== height
+        ) {
+
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        ctx.fillStyle =
+            "rgba(0, 0, 0, 0.25)";
+
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const barWidth =
+            Math.max(
+                2,
+                canvas.width /
+                Math.min(bufferLength, 80)
+            );
+
+        let x = 0;
+
+        const limit =
+            Math.min(
+                bufferLength,
+                80
+            );
+
+        for (
+            let i = 0;
+            i < limit;
+            i++
+        ) {
+
+            const value =
+                dataArray[i];
+
+            const barHeight =
+                (value / 255) *
+                canvas.height;
+
+            const gradient =
+                ctx.createLinearGradient(
+                    0,
+                    canvas.height,
+                    0,
+                    0
+                );
+
+            gradient.addColorStop(
+                0,
+                "#ff007f"
+            );
+
+            gradient.addColorStop(
+                0.5,
+                "#9400d3"
+            );
+
+            gradient.addColorStop(
+                1,
+                "#00f0ff"
+            );
+
+            ctx.fillStyle =
+                gradient;
+
+            ctx.fillRect(
+                x,
+                canvas.height - barHeight,
+                barWidth - 2,
+                barHeight
+            );
+
+            x += barWidth;
+        }
+    }
+
+    draw();
+}
+
+
+/* =========================================================
+   CANVAS RESIZE
+========================================================= */
+
+window.addEventListener(
+    "resize",
+    () => {
+
+        canvas.width =
+            canvas.clientWidth;
+
+        canvas.height =
+            canvas.clientHeight;
+    }
+);
+
+
+/* =========================================================
+   INITIAL STATE
+========================================================= */
+
+canvas.width =
+    canvas.clientWidth;
+
+canvas.height =
+    canvas.clientHeight;
+
+</script>
+
+</body>
+</html>
