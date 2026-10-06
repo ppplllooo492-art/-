@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AETHER-AI QUANTUM MUSIC ENGINE</title>
+
+<style>
+:root {
+    --cyber-cyan: #00f3ff;
+    --cyber-pink: #ff0055;
+    --cyber-purple: #8a2be2;
+    --matrix-glow: rgba(0,243,255,.4);
+    --dark-core: #06020f;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+}
+
+body {
+    background: var(--dark-core);
+    color: #fff;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.universe-grid {
+    position: relative;
+    z-index: 2;
+    max-width: 1600px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width:1200px) {
+    .universe-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cyber-panel {
+    background: rgba(15,8,28,.8);
+    border: 2px solid var(--cyber-cyan);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 20px var(--matrix-glow);
+    backdrop-filter: blur(15px);
+}
+
+.cyber-panel:hover {
+    border-color: var(--cyber-pink);
+}
+
+.brand-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: clamp(1.5rem,4vw,2.8rem);
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(
+        45deg,
+        var(--cyber-cyan),
+        var(--cyber-pink),
+        var(--cyber-purple)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 5px 0;
+}
+
+h2 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--cyber-cyan);
+    border-bottom: 2px solid rgba(0,243,255,.2);
+    padding-bottom: 6px;
+}
+
+.flex-row {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex: 1;
+    background: rgba(0,0,0,.6);
+    border: 1px solid var(--cyber-cyan);
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: #fff;
+    outline: none;
+    min-width: 0;
+}
+
+input[type="text"]:focus {
+    border-color: var(--cyber-pink);
+    box-shadow: 0 0 10px var(--cyber-pink);
+}
+
+.cyber-btn {
+    background: linear-gradient(
+        45deg,
+        var(--cyber-cyan),
+        var(--cyber-purple)
+    );
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: .2s;
+}
+
+.cyber-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 15px var(--cyber-pink);
+}
+
+.ai-btn {
+    background: linear-gradient(45deg,#ff0055,#9400d3);
+}
+
+.playlist-scroller {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.music-card {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.music-card:hover,
+.music-card.active {
+    background: rgba(0,243,255,.1);
+    border-color: var(--cyber-cyan);
+}
+
+.music-card img {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.center-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+}
+
+.now-playing {
+    text-align: center;
+    width: 100%;
+}
+
+.now-playing h3 {
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.now-playing p {
+    color: #8a7fa6;
+}
+
+.vinyl-area {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.main-vinyl {
+    width: 100%;
+    height: 100%;
+    background:
+        repeating-radial-gradient(
+            circle,
+            #151020 0px,
+            #151020 4px,
+            #050308 5px,
+            #050308 8px
+        );
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 30px var(--cyber-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spin 4s linear infinite;
+    animation-play-state: paused;
+}
+
+.vinyl-core {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(
+        135deg,
+        var(--cyber-pink),
+        var(--cyber-cyan)
+    );
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: .75rem;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.control-cluster {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.round-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.master-play {
+    width: 55px;
+    height: 55px;
+    font-size: 1.5rem;
+    background: linear-gradient(
+        45deg,
+        var(--cyber-pink),
+        var(--cyber-cyan)
+    );
+}
+
+.slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: .8rem;
+    width: 100%;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: rgba(255,255,255,.1);
+    height: 5px;
+    border-radius: 3px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyber-cyan);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyber-cyan);
+    border: none;
+    cursor: pointer;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 80px;
+    background: rgba(0,0,0,.5);
+    border-radius: 8px;
+    border: 1px solid rgba(0,243,255,.2);
+    overflow: hidden;
+}
+
+#audioCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.mood-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.file-upload-box {
+    border: 2px dashed var(--cyber-cyan);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(0,243,255,.03);
+}
+
+.file-upload-box:hover {
+    background: rgba(0,243,255,.08);
+    border-color: var(--cyber-pink);
+}
+
+.file-upload-box input {
+    display: none;
+}
+
+.roblox-box {
+    background: rgba(255,90,0,.1);
+    border: 1px solid #ff5a00;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.roblox-output {
+    background: rgba(0,0,0,.4);
+    border: 1px dashed #ff5a00;
+    padding: 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 1.1rem;
+    text-align: center;
+    color: #ff5a00;
+    font-weight: bold;
+}
+
+.eq-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+}
+
+.eq-node {
+    width: 100%;
+}
+
+#pipWindowClone {
+    position: fixed;
+    top: -500px;
+    left: -500px;
+    width: 300px;
+    height: 300px;
+    background: #06020f;
+    border: 2px solid #00f3ff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #00f3ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    z-index: 9999;
+}
+
+#pipCanvasStreamer {
+    display: none;
+}
+
+.status {
+    color: #8a7fa6;
+    font-size: .8rem;
+    text-align: center;
+}
+
+@media(max-width:600px) {
+    body {
+        padding: 10px;
+    }
+
+    .cyber-panel {
+        padding: 14px;
+    }
+
+    .flex-row {
+        flex-direction: column;
+    }
+
+    .vinyl-area {
+        width: 160px;
+        height: 160px;
+    }
+
+    .mood-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="universe-grid">
+
+    <div class="brand-title">
+        AETHER-AI QUANTUM MUSIC ENGINE
+    </div>
+
+    <!-- LEFT -->
+    <section class="cyber-panel">
+
+        <h2>
+            🌐 UNIVERSAL CLOUD SEARCH
+        </h2>
+
+        <div class="flex-row">
+            <input
+                type="text"
+                id="userInput"
+                placeholder="ค้นหาชื่อเพลง / ศิลปิน..."
+            >
+            <button class="cyber-btn" id="searchAction">
+                ค้นหา
+            </button>
+        </div>
+
+        <div class="status" id="searchStatus">
+            พร้อมค้นหาเพลง
+        </div>
+
+        <h2>🧠 AI MOOD AUTOMATION</h2>
+
+        <div class="mood-grid">
+            <button class="cyber-btn ai-btn" data-mood="cyberpunk">
+                🤖 CYBERPUNK
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="lofi">
+                ☕ LO-FI CHILL
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="metal">
+                🎸 METALLIC
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="future rave">
+                🚀 FUTURE RAVE
+            </button>
+        </div>
+
+        <h2>📂 LOCAL STORAGE HUB</h2>
+
+        <label class="file-upload-box">
+            📁 คลิกเพื่อเลือกไฟล์เพลง
+            <br>
+            <small>.mp3 / .wav / .ogg / .m4a</small>
+            <input
+                type="file"
+                id="fileInput"
+                accept="audio/*"
+                multiple
+            >
+        </label>
+
+        <h2>🎵 PLAYLIST</h2>
+
+        <div
+            class="playlist-scroller"
+            id="musicListContainer"
+        >
+            <div class="status">
+                กำลังโหลดโครงข่ายสากลเบื้องต้น...
+            </div>
+        </div>
+
+    </section>
+
+    <!-- CENTER -->
+    <section class="cyber-panel center-hub">
+
+        <h2 style="width:100%;text-align:center;">
+            🔮 QUANTUM INTERACTIVE CORE
+        </h2>
+
+        <div class="vinyl-area">
+            <div class="main-vinyl" id="vinylDisk">
+                <div class="vinyl-core">
+                    AETHER
+                </div>
+            </div>
+        </div>
+
+        <div class="now-playing">
+            <h3 id="trackTitle">
+                No Song Selected
+            </h3>
+
+            <p id="trackArtist">
+                Aether-AI Core
+            </p>
+        </div>
+
+        <div class="control-cluster">
+
+            <button
+                class="cyber-btn round-btn"
+                id="prevTrackAction"
+            >
+                ⏮
+            </button>
+
+            <button
+                class="cyber-btn round-btn master-play"
+                id="playToggleAction"
+            >
+                ▶
+            </button>
+
+            <button
+                class="cyber-btn round-btn"
+                id="nextTrackAction"
+            >
+                ⏭
+            </button>
+
+        </div>
+
+        <div class="slider-group">
+            <label>
+                🔊 OUTPUT VOLUME
+                <span id="volMetric">80%</span>
+            </label>
+
+            <input
+                type="range"
+                id="volumeController"
+                min="0"
+                max="100"
+                value="80"
+            >
+        </div>
+
+        <div class="slider-group">
+            <label>
+                🚀 SPEED
+                <span id="speedMetric">1.0x</span>
+            </label>
+
+            <input
+                type="range"
+                id="speedController"
+                min="50"
+                max="200"
+                value="100"
+            >
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="audioCanvas"></canvas>
+        </div>
+
+        <div class="flex-row" style="width:100%;">
+            <button
+                class="cyber-btn"
+                id="downloadAction"
+                style="flex:1;"
+            >
+                📥 ดาวน์โหลด
+            </button>
+
+            <button
+                class="cyber-btn"
+                id="pipAction"
+                style="flex:1;"
+            >
+                🖥️ หน้าต่างลอย
+            </button>
+        </div>
+
+        <div
+            id="pipWindowClone"
+        >
+            <strong
+                id="pipTitle"
+                style="color:#00f3ff;"
+            >
+                No Song
+            </strong>
+
+            <span
+                id="pipArtist"
+                style="color:#8a7fa6;margin:10px 0;"
+            >
+                Aether-AI
+            </span>
+
+            <button
+                class="cyber-btn"
+                onclick="togglePlayFromPip()"
+            >
+                PLAY / PAUSE
+            </button>
+        </div>
+
+        <video
+            id="hiddenPipVideo"
+            muted
+            playsinline
+            style="display:none;"
+        ></video>
+
+        <canvas
+            id="pipCanvasStreamer"
+            width="300"
+            height="300"
+        ></canvas>
+
+    </section>
+
+    <!-- RIGHT -->
+    <section class="cyber-panel">
+
+        <h2>🧱 ROBLOX & GAME MUSIC ID</h2>
+
+        <div class="roblox-box">
+
+            <div>
+                🤖 ROBLOX AUDIO ID
+            </div>
+
+            <div
+                class="roblox-output"
+                id="robloxIdOutput"
+            >
+                N/A
+            </div>
+
+            <button
+                class="cyber-btn"
+                id="copyRobloxIdAction"
+            >
+                📋 คัดลอกรหัส
+            </button>
+
+            <small style="color:#ff9966;">
+                หมายเหตุ: ระบบนี้สร้างเพียงรหัสจำลอง
+                จากข้อมูลเพลง ไม่ใช่ Roblox Asset ID จริง
+            </small>
+
+        </div>
+
+        <h2>🎛️ AI NEURAL EQUALIZER</h2>
+
+        <div class="eq-grid">
+
+            <div class="slider-group">
+                <label>BASS</label>
+                <input
+                    class="eq-node"
+                    type="range"
+                    data-freq="80"
+                    min="-15"
+                    max="15"
+                    value="0"
+                >
+            </div>
+
+            <div class="slider-group">
+                <label>MID</label>
+                <input
+                    class="eq-node"
+                    type="range"
+                    data-freq="1000"
+                    min="-15"
+                    max="15"
+                    value="0"
+                >
+            </div>
+
+            <div class="slider-group">
+                <label>TREBLE</label>
+                <input
+                    class="eq-node"
+                    type="range"
+                    data-freq="8000"
+                    min="-15"
+                    max="15"
+                    value="0"
+                >
+            </div>
+
+        </div>
+
+        <h2>🧠 QUANTUM BASS BOOST</h2>
+
+        <button
+            class="cyber-btn"
+            id="bassBoostAction"
+        >
+            BASS BOOST: OFF
+        </button>
+
+        <h2>🎤 VOCAL ISOLATION RACK</h2>
+
+        <button
+            class="cyber-btn"
+            id="vocalAction"
+        >
+            VOCAL MODE: OFF
+        </button>
+
+        <h2>⚡ SYSTEM</h2>
+
+        <div
+            id="systemMessage"
+            class="status"
+        >
+            READY TO CONSOLE
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   AETHER-AI QUANTUM MUSIC ENGINE
+   ========================================================= */
+
+let contextAudio = null;
+let coreAudio = new Audio();
+
+coreAudio.crossOrigin = "anonymous";
+coreAudio.preload = "metadata";
+
+let nodeSource = null;
+let nodeGain = null;
+let nodeAnalyser = null;
+
+let filteringNetwork = {};
+let searchQueue = [];
+let systemCursor = 0;
+let visualizerStarted = false;
+let bassBoostEnabled = false;
+let vocalModeEnabled = false;
+
+/* DOM */
+const playToggleAction =
+    document.getElementById("playToggleAction");
+
+const prevTrackAction =
+    document.getElementById("prevTrackAction");
+
+const nextTrackAction =
+    document.getElementById("nextTrackAction");
+
+const vinylDisk =
+    document.getElementById("vinylDisk");
+
+const userInput =
+    document.getElementById("userInput");
+
+const searchAction =
+    document.getElementById("searchAction");
+
+const musicListContainer =
+    document.getElementById("musicListContainer");
+
+const trackTitle =
+    document.getElementById("trackTitle");
+
+const trackArtist =
+    document.getElementById("trackArtist");
+
+const volumeController =
+    document.getElementById("volumeController");
+
+const speedController =
+    document.getElementById("speedController");
+
+const fileInput =
+    document.getElementById("fileInput");
+
+const downloadAction =
+    document.getElementById("downloadAction");
+
+const robloxIdOutput =
+    document.getElementById("robloxIdOutput");
+
+const copyRobloxIdAction =
+    document.getElementById("copyRobloxIdAction");
+
+const pipAction =
+    document.getElementById("pipAction");
+
+const hiddenPipVideo =
+    document.getElementById("hiddenPipVideo");
+
+const pipCanvasStreamer =
+    document.getElementById("pipCanvasStreamer");
+
+const pipWindowClone =
+    document.getElementById("pipWindowClone");
+
+const pipTitle =
+    document.getElementById("pipTitle");
+
+const pipArtist =
+    document.getElementById("pipArtist");
+
+const audioCanvas =
+    document.getElementById("audioCanvas");
+
+const glCtx =
+    audioCanvas.getContext("2d");
+
+const cvCtx =
+    pipCanvasStreamer.getContext("2d");
+
+const searchStatus =
+    document.getElementById("searchStatus");
+
+const systemMessage =
+    document.getElementById("systemMessage");
+
+const bassBoostAction =
+    document.getElementById("bassBoostAction");
+
+const vocalAction =
+    document.getElementById("vocalAction");
+
+
+/* =========================================================
+   PIP VISUALIZER
+   ========================================================= */
+
+if (
+    hiddenPipVideo &&
+    pipCanvasStreamer &&
+    pipCanvasStreamer.captureStream
+) {
+    try {
+        hiddenPipVideo.srcObject =
+            pipCanvasStreamer.captureStream(15);
+    } catch (error) {
+        console.warn("PiP stream unavailable:", error);
+    }
+}
+
+function drawVirtualPipPanel() {
+
+    if (!cvCtx) return;
+
+    cvCtx.fillStyle = "#06020f";
+    cvCtx.fillRect(0, 0, 300, 300);
+
+    cvCtx.strokeStyle = "#00f3ff";
+    cvCtx.lineWidth = 4;
+    cvCtx.strokeRect(2, 2, 296, 296);
+
+    cvCtx.fillStyle = "#00f3ff";
+    cvCtx.font = "bold 18px sans-serif";
+    cvCtx.textAlign = "center";
+
+    cvCtx.fillText(
+        "AETHER-AI CONTROLLER",
+        150,
+        45
+    );
+
+    cvCtx.strokeStyle =
+        coreAudio.paused
+            ? "#ff0055"
+            : "#00f3ff";
+
+    cvCtx.beginPath();
+
+    cvCtx.arc(
+        150,
+        125,
+        55,
+        0,
+        Math.PI * 2
+    );
+
+    cvCtx.stroke();
+
+    cvCtx.fillStyle = "#fff";
+    cvCtx.font = "bold 14px sans-serif";
+
+    const title =
+        (trackTitle.innerText || "No Song")
+        .substring(0, 25);
+
+    cvCtx.fillText(
+        title,
+        150,
+        220
+    );
+
+    cvCtx.fillStyle = "#8a7fa6";
+    cvCtx.font = "12px sans-serif";
+
+    cvCtx.fillText(
+        (trackArtist.innerText || "Aether-AI")
+        .substring(0, 30),
+        150,
+        245
+    );
+
+    cvCtx.fillStyle =
+        coreAudio.paused
+            ? "#ff0055"
+            : "#00f3ff";
+
+    cvCtx.font = "bold 11px sans-serif";
+
+    cvCtx.fillText(
+        coreAudio.paused
+            ? "[PAUSED]"
+            : "[PLAYING]",
+        150,
+        128
+    );
+
+    requestAnimationFrame(drawVirtualPipPanel);
+}
+
+drawVirtualPipPanel();
+
+
+/* =========================================================
+   AUDIO ENGINE
+   ========================================================= */
+
+function executeAudioNodeSetup() {
+
+    if (contextAudio) return;
+
+    const AudioContextClass =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+    if (!AudioContextClass) {
+        systemMessage.innerText =
+            "Web Audio API ไม่รองรับบนเบราว์เซอร์นี้";
+        return;
+    }
+
+    contextAudio =
+        new AudioContextClass();
+
+    nodeSource =
+        contextAudio.createMediaElementSource(
+            coreAudio
+        );
+
+    nodeGain =
+        contextAudio.createGain();
+
+    nodeAnalyser =
+        contextAudio.createAnalyser();
+
+    nodeAnalyser.fftSize = 128;
+    nodeAnalyser.smoothingTimeConstant = .8;
+
+    let bridgeNode = nodeSource;
+
+    document
+        .querySelectorAll(".eq-node")
+        .forEach((slider) => {
+
+            const frequency =
+                Number(
+                    slider.getAttribute("data-freq")
+                );
+
+            const filter =
+                contextAudio.createBiquadFilter();
+
+            filter.frequency.value =
+                frequency;
+
+            if (frequency === 80) {
+                filter.type = "lowshelf";
+            } else if (frequency === 8000) {
+                filter.type = "highshelf";
+            } else {
+                filter.type = "peaking";
+            }
+
+            filter.Q.value = 1;
+            filter.gain.value =
+                Number(slider.value);
+
+            filteringNetwork[frequency] =
+                filter;
+
+            bridgeNode.connect(filter);
+            bridgeNode = filter;
+        });
+
+    bridgeNode.connect(nodeGain);
+    nodeGain.connect(nodeAnalyser);
+    nodeAnalyser.connect(
+        contextAudio.destination
+    );
+
+    nodeGain.gain.value =
+        Number(volumeController.value) / 100;
+
+    renderVisualizerWaves();
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+async function connectGlobalSearchBank(query) {
+
+    if (!query || !query.trim()) return;
+
+    const cleanQuery = query.trim();
+
+    musicListContainer.innerHTML = `
+        <div class="status">
+            📡 กำลังค้นหา "${escapeHTML(cleanQuery)}"...
+        </div>
+    `;
+
+    searchStatus.innerText =
+        "กำลังเชื่อมต่อ Music Search API...";
+
+    try {
+
+        const apiURL =
+            "https://itunes.apple.com/search?" +
+            new URLSearchParams({
+                term: cleanQuery,
+                limit: "30",
+                media: "music",
+                entity: "song"
+            }).toString();
+
+        const response =
+            await fetch(apiURL);
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        const json =
+            await response.json();
+
+        searchQueue =
+            (json.results || [])
+            .filter(
+                track => track.previewUrl
+            );
+
+        systemCursor = 0;
+
+        if (searchQueue.length === 0) {
+
+            musicListContainer.innerHTML = `
+                <div class="status">
+                    ❌ ไม่พบเพลงที่มี Preview
+                </div>
+            `;
+
+            searchStatus.innerText =
+                "ไม่พบผลลัพธ์";
+
+            return;
+        }
+
+        searchStatus.innerText =
+            `พบ ${searchQueue.length} เพลง`;
+
+        refreshPlaylistUI();
+
+    } catch (error) {
+
+        console.error(error);
+
+        musicListContainer.innerHTML = `
+            <div class="status" style="color:#ff0055;">
+                ❌ ไม่สามารถเชื่อมต่อระบบค้นหาเพลงได้
+                <br>
+                ลองตรวจสอบอินเทอร์เน็ตแล้วค้นหาอีกครั้ง
+            </div>
+        `;
+
+        searchStatus.innerText =
+            "Search API Error";
+    }
+}
+
+
+/* =========================================================
+   PLAYLIST UI
+   ========================================================= */
+
+function refreshPlaylistUI() {
+
+    musicListContainer.innerHTML = "";
+
+    searchQueue.forEach((track,index) => {
+
+        const node =
+            document.createElement("div");
+
+        node.className =
+            "music-card" +
+            (index === systemCursor
+                ? " active"
+                : "");
+
+        const image =
+            track.artworkUrl100 ||
+            "https://placehold.co/100x100/06020f/00f3ff?text=AETHER";
+
+        node.innerHTML = `
+            <img
+                src="${escapeAttribute(image)}"
+                alt="cover"
+            >
+
+            <div style="
+                flex:1;
+                overflow:hidden;
+            ">
+                <div style="
+                    font-weight:bold;
+                    font-size:.85rem;
+                    white-space:nowrap;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                ">
+                    ${escapeHTML(
+                        track.trackName ||
+                        "Unknown Track"
+                    )}
+                </div>
+
+                <div style="
+                    font-size:.75rem;
+                    color:#8a7fa6;
+                    white-space:nowrap;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                ">
+                    ${escapeHTML(
+                        track.artistName ||
+                        "Unknown Artist"
+                    )}
+                </div>
+            </div>
+        `;
+
+        node.addEventListener(
+            "click",
+            () => commandTrackPlay(index)
+        );
+
+        musicListContainer.appendChild(node);
+    });
+}
+
+
+/* =========================================================
+   PLAY TRACK
+   ========================================================= */
+
+async function commandTrackPlay(index) {
+
+    if (
+        !searchQueue.length ||
+        !searchQueue[index]
+    ) {
+        return;
+    }
+
+    executeAudioNodeSetup();
+
+    if (contextAudio) {
+
+        try {
+            if (
+                contextAudio.state ===
+                "suspended"
+            ) {
+                await contextAudio.resume();
+            }
+        } catch (error) {
+            console.warn(error);
+        }
+    }
+
+    systemCursor = index;
+
+    const selection =
+        searchQueue[index];
+
+    coreAudio.src =
+        selection.previewUrl;
+
+    trackTitle.innerText =
+        selection.trackName ||
+        "Unknown Track";
+
+    trackArtist.innerText =
+        selection.artistName ||
+        "Unknown Artist";
+
+    pipTitle.innerText =
+        trackTitle.innerText;
+
+    pipArtist.innerText =
+        trackArtist.innerText;
+
+    generateRobloxIdAlgorithm(
+        trackTitle.innerText +
+        trackArtist.innerText
+    );
+
+    coreAudio.playbackRate =
+        Number(speedController.value) / 100;
+
+    try {
+
+        await coreAudio.play();
+
+        playToggleAction.innerText =
+            "⏸";
+
+        vinylDisk.style
+            .animationPlayState =
+            "running";
+
+    } catch (error) {
+
+        console.warn(
+            "Playback requires user interaction:",
+            error
+        );
+
+        playToggleAction.innerText =
+            "▶";
+    }
+
+    document
+        .querySelectorAll(".music-card")
+        .forEach((card,idx) => {
+
+            card.classList.toggle(
+                "active",
+                idx === index
+            );
+        });
+
+    systemMessage.innerText =
+        "PLAYING: " +
+        trackTitle.innerText;
+}
+
+
+/* =========================================================
+   ROBLOX ID DEMO HASH
+   ========================================================= */
+
+function generateRobloxIdAlgorithm(seedString) {
+
+    let hash = 0;
+
+    for (
+        let i = 0;
+        i < seedString.length;
+        i++
+    ) {
+
+        hash =
+            seedString.charCodeAt(i) +
+            ((hash << 5) - hash);
+
+        hash |= 0;
+    }
+
+    const finalId =
+        Math.abs(hash % 9000000000) +
+        1000000000;
+
+    robloxIdOutput.innerText =
+        String(finalId);
+}
+
+
+/* =========================================================
+   COPY ID
+   ========================================================= */
+
+async function copyRobloxId() {
+
+    const value =
+        robloxIdOutput.innerText;
+
+    if (!value || value === "N/A") {
+        alert("ยังไม่มีรหัสให้คัดลอก");
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            value
+        );
+
+        alert(
+            "คัดลอกรหัสจำลองแล้ว: " +
+            value
+        );
+
+    } catch (error) {
+
+        const temp =
+            document.createElement("textarea");
+
+        temp.value = value;
+        document.body.appendChild(temp);
+        temp.select();
+
+        try {
+            document.execCommand("copy");
+        } catch (_) {}
+
+        temp.remove();
+
+        alert("คัดลอกเรียบร้อยแล้ว");
+    }
+}
+
+
+/* =========================================================
+   LOCAL FILES
+   ========================================================= */
+
+fileInput.addEventListener(
+    "change",
+    (event) => {
+
+        const files =
+            Array.from(
+                event.target.files || []
+            );
+
+        if (!files.length) return;
+
+        const fileTracks =
+            files.map(file => ({
+
+                trackName:
+                    file.name.replace(
+                        /\.[^/.]+$/,
+                        ""
+                    ),
+
+                artistName:
+                    "Local File",
+
+                previewUrl:
+                    URL.createObjectURL(file),
+
+                artworkUrl100:
+                    "https://placehold.co/100x100/06020f/00f3ff?text=LOCAL"
+
+            }));
+
+        searchQueue =
+            fileTracks.concat(searchQueue);
+
+        systemCursor = 0;
+
+        refreshPlaylistUI();
+
+        commandTrackPlay(0);
+    }
+);
+
+
+/* =========================================================
+   DOWNLOAD
+   ========================================================= */
+
+downloadAction.addEventListener(
+    "click",
+    async () => {
+
+        if (!coreAudio.src) {
+
+            alert(
+                "ยังไม่มีเพลงที่กำลังเล่น"
+            );
+
+            return;
+        }
+
+        if (
+            coreAudio.src.startsWith(
+                "blob:"
+            )
+        ) {
+
+            const link =
+                document.createElement("a");
+
+            link.href =
+                coreAudio.src;
+
+            link.download =
+                trackTitle.innerText +
+                ".mp3";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    coreAudio.src
+                );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Download failed"
+                );
+            }
+
+            const blob =
+                await response.blob();
+
+            const url =
+                URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download =
+                trackTitle.innerText +
+                " - AetherAI.mp3";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setTimeout(
+                () => URL.revokeObjectURL(url),
+                1000
+            );
+
+        } catch (error) {
+
+            alert(
+                "ไม่สามารถดาวน์โหลด Preview จากเซิร์ฟเวอร์นี้ได้"
+            );
+        }
+    }
+);
+
+
+/* =========================================================
+   AI MOOD
+   ========================================================= */
+
+function triggerAIMood(keyword) {
+
+    userInput.value =
+        keyword;
+
+    connectGlobalSearchBank(
+        keyword
+    );
+}
+
+document
+    .querySelectorAll("[data-mood]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const mood =
+                    button.getAttribute(
+                        "data-mood"
+                    );
+
+                triggerAIMood(mood);
+            }
+        );
+    });
+
+
+/* =========================================================
+   PLAY / PAUSE
+   ========================================================= */
+
+playToggleAction.addEventListener(
+    "click",
+    async () => {
+
+        if (!coreAudio.src) {
+            return;
+        }
+
+        executeAudioNodeSetup();
+
+        if (
+            contextAudio &&
+            contextAudio.state ===
+            "suspended"
+        ) {
+            await contextAudio.resume();
+        }
+
+        if (coreAudio.paused) {
+
+            try {
+                await coreAudio.play();
+
+                playToggleAction.innerText =
+                    "⏸";
+
+                vinylDisk.style
+                    .animationPlayState =
+                    "running";
+
+            } catch (error) {
+                console.warn(error);
+            }
+
+        } else {
+
+            coreAudio.pause();
+
+            playToggleAction.innerText =
+                "▶";
+
+            vinylDisk.style
+                .animationPlayState =
+                "paused";
+        }
+    }
+);
+
+
+/* =========================================================
+   NEXT / PREVIOUS
+   ========================================================= */
+
+nextTrackAction.addEventListener(
+    "click",
+    () => {
+
+        if (!searchQueue.length) return;
+
+        commandTrackPlay(
+            (systemCursor + 1) %
+            searchQueue.length
+        );
+    }
+);
+
+prevTrackAction.addEventListener(
+    "click",
+    () => {
+
+        if (!searchQueue.length) return;
+
+        commandTrackPlay(
+            (
+                systemCursor -
+                1 +
+                searchQueue.length
+            ) %
+            searchQueue.length
+        );
+    }
+);
+
+
+/* =========================================================
+   AUDIO EVENTS
+   ========================================================= */
+
+coreAudio.addEventListener(
+    "ended",
+    () => {
+
+        if (searchQueue.length) {
+            nextTrackAction.click();
+        }
+    }
+);
+
+coreAudio.addEventListener(
+    "play",
+    () => {
+
+        playToggleAction.innerText =
+            "⏸";
+
+        vinylDisk.style
+            .animationPlayState =
+            "running";
+    }
+);
+
+coreAudio.addEventListener(
+    "pause",
+    () => {
+
+        playToggleAction.innerText =
+            "▶";
+
+        vinylDisk.style
+            .animationPlayState =
+            "paused";
+    }
+);
+
+
+/* =========================================================
+   SEARCH EVENTS
+   ========================================================= */
+
+searchAction.addEventListener(
+    "click",
+    () => {
+
+        const query =
+            userInput.value.trim();
+
+        if (query) {
+            connectGlobalSearchBank(
+                query
+            );
+        }
+    }
+);
+
+userInput.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (event.key === "Enter") {
+            searchAction.click();
+        }
+    }
+);
+
+
+/* =========================================================
+   VOLUME
+   ========================================================= */
+
+volumeController.addEventListener(
+    "input",
+    (event) => {
+
+        const value =
+            Number(event.target.value);
+
+        document.getElementById(
+            "volMetric"
+        ).innerText =
+            value + "%";
+
+        if (nodeGain) {
+            nodeGain.gain.value =
+                value / 100;
+        }
+    }
+);
+
+
+/* =========================================================
+   SPEED
+   ========================================================= */
+
+speedController.addEventListener(
+    "input",
+    (event) => {
+
+        const speed =
+            Number(event.target.value) /
+            100;
+
+        document.getElementById(
+            "speedMetric"
+        ).innerText =
+            speed.toFixed(1) + "x";
+
+        coreAudio.playbackRate =
+            speed;
+    }
+);
+
+
+/* =========================================================
+   EQUALIZER
+   ========================================================= */
+
+document
+    .querySelectorAll(".eq-node")
+    .forEach(slider => {
+
+        slider.addEventListener(
+            "input",
+            event => {
+
+                const freq =
+                    Number(
+                        event.target
+                            .getAttribute(
+                                "data-freq"
+                            )
+                    );
+
+                const filter =
+                    filteringNetwork[freq];
+
+                if (filter) {
+                    filter.gain.value =
+                        Number(
+                            event.target.value
+                        );
+                }
+            }
+        );
+    });
+
+
+/* =========================================================
+   BASS BOOST
+   ========================================================= */
+
+bassBoostAction.addEventListener(
+    "click",
+    () => {
+
+        bassBoostEnabled =
+            !bassBoostEnabled;
+
+        bassBoostAction.innerText =
+            bassBoostEnabled
+                ? "BASS BOOST: ON"
+                : "BASS BOOST: OFF";
+
+        const bass =
+            filteringNetwork[80];
+
+        if (bass) {
+
+            bass.gain.value =
+                bassBoostEnabled
+                    ? 10
+                    : 0;
+        }
+    }
+);
+
+
+/* =========================================================
+   VOCAL MODE
+   ========================================================= */
+
+vocalAction.addEventListener(
+    "click",
+    () => {
+
+        vocalModeEnabled =
+            !vocalModeEnabled;
+
+        vocalAction.innerText =
+            vocalModeEnabled
+                ? "VOCAL MODE: ON"
+                : "VOCAL MODE: OFF";
+
+        /*
+         * Web Audio ไม่สามารถแยกเสียงร้อง
+         * จากเพลงแบบสมบูรณ์ด้วย EQ ธรรมดาได้
+         * ระบบนี้จึงใช้เป็นโหมดจำลอง EQ
+         */
+
+        const mid =
+            filteringNetwork[1000];
+
+        if (mid) {
+
+            mid.gain.value =
+                vocalModeEnabled
+                    ? 4
+                    : 0;
+        }
+    }
+);
+
+
+/* =========================================================
+   VISUALIZER
+   ========================================================= */
+
+function renderVisualizerWaves() {
+
+    if (visualizerStarted) return;
+
+    visualizerStarted = true;
+
+    function loop() {
+
+        requestAnimationFrame(loop);
+
+        if (!nodeAnalyser) return;
+
+        const width =
+            audioCanvas.clientWidth ||
+            300;
+
+        const height =
+            audioCanvas.clientHeight ||
+            80;
+
+        if (
+            audioCanvas.width !== width ||
+            audioCanvas.height !== height
+        ) {
+            audioCanvas.width = width;
+            audioCanvas.height = height;
+        }
+
+        const binCount =
+            nodeAnalyser.frequencyBinCount;
+
+        const dataArray =
+            new Uint8Array(binCount);
+
+        nodeAnalyser.getByteFrequencyData(
+            dataArray
+        );
+
+        glCtx.fillStyle =
+            "rgba(6,2,15,.35)";
+
+        glCtx.fillRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        const barWidth =
+            Math.max(
+                2,
+                width / binCount
+            );
+
+        for (
+            let i = 0;
+            i < binCount;
+            i++
+        ) {
+
+            const value =
+                dataArray[i];
+
+            const barHeight =
+                (value / 255) *
+                height;
+
+            const x =
+                i * barWidth;
+
+            const gradient =
+                glCtx.createLinearGradient(
+                    0,
+                    height,
+                    0,
+                    height - barHeight
+                );
+
+            gradient.addColorStop(
+                0,
+                "#8a2be2"
+            );
+
+            gradient.addColorStop(
+                .5,
+                "#00f3ff"
+            );
+
+            gradient.addColorStop(
+                1,
+                "#ff0055"
+            );
+
+            glCtx.fillStyle =
+                gradient;
+
+            glCtx.fillRect(
+                x,
+                height - barHeight,
+                Math.max(
+                    1,
+                    barWidth - 1
+                ),
+                barHeight
+            );
+        }
+    }
+
+    loop();
+}
+
+
+/* =========================================================
+   PIP
+   ========================================================= */
+
+pipAction.addEventListener(
+    "click",
+    async () => {
+
+        try {
+
+            if (
+                document.pictureInPictureElement
+            ) {
+
+                await document
+                    .exitPictureInPicture();
+
+                pipWindowClone.style.top =
+                    "-500px";
+
+                return;
+            }
+
+            if (
+                hiddenPipVideo &&
+                hiddenPipVideo.requestPictureInPicture
+            ) {
+
+                await hiddenPipVideo
+                    .requestPictureInPicture();
+
+                return;
+            }
+
+            throw new Error(
+                "PiP not supported"
+            );
+
+        } catch (error) {
+
+            pipWindowClone.style.top =
+                "20px";
+
+            pipWindowClone.style.left =
+                "20px";
+        }
+    }
+);
+
+
+/* =========================================================
+   PIP CLOSE
+   ========================================================= */
+
+document.addEventListener(
+    "leavepictureinpicture",
+    () => {
+
+        pipWindowClone.style.top =
+            "-500px";
+    }
+);
+
+
+/* =========================================================
+   SECURITY HELPERS
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+function escapeAttribute(value) {
+    return escapeHTML(value);
+}
+
+
+/* =========================================================
+   COPY BUTTON
+   ========================================================= */
+
+copyRobloxIdAction.addEventListener(
+    "click",
+    copyRobloxId
+);
+
+
+/* =========================================================
+   INITIAL STATE
+   ========================================================= */
+
+systemMessage.innerText =
+    "READY TO CONSOLE";
+
+searchStatus.innerText =
+    "พร้อมค้นหาเพลง";
+
+connectGlobalSearchBank(
+    "roblox hybrid hit"
+);
+
+</script>
+
+</body>
+</html>
