@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AETHER-AI QUANTUM MUSIC</title>
+
+<style>
+:root {
+    --cyber-cyan: #00f3ff;
+    --cyber-pink: #ff0055;
+    --cyber-purple: #8a2be2;
+    --matrix-glow: rgba(0,243,255,.4);
+    --dark-core: #06020f;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+}
+
+body {
+    background: var(--dark-core);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+#nebula-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 50% 50%, #16062e 0%, #030107 75%);
+}
+
+.universe-grid {
+    max-width: 1500px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    gap: 25px;
+}
+
+.brand-title {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(
+        45deg,
+        var(--cyber-cyan),
+        var(--cyber-pink),
+        var(--cyber-purple)
+    );
+    -webkit-background-clip: text;
+    color: transparent;
+    padding: 10px;
+}
+
+.cyber-panel {
+    background: rgba(15,8,28,.82);
+    border: 2px solid var(--cyber-cyan);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 0 20px var(--matrix-glow);
+    backdrop-filter: blur(15px);
+    transition: .3s;
+}
+
+.cyber-panel:hover {
+    border-color: var(--cyber-pink);
+    box-shadow: 0 0 30px rgba(255,0,85,.35);
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: var(--cyber-cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 1px solid rgba(0,243,255,.25);
+    padding-bottom: 8px;
+}
+
+.search-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    background: rgba(0,0,0,.6);
+    border: 1px solid var(--cyber-cyan);
+    padding: 12px 15px;
+    border-radius: 10px;
+    color: white;
+    outline: none;
+}
+
+input[type="text"]:focus {
+    border-color: var(--cyber-pink);
+    box-shadow: 0 0 12px rgba(255,0,85,.5);
+}
+
+.cyber-btn {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 18px;
+    background: linear-gradient(
+        45deg,
+        var(--cyber-cyan),
+        var(--cyber-purple)
+    );
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.cyber-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 18px var(--cyber-cyan);
+}
+
+.ai-btn {
+    background: linear-gradient(
+        45deg,
+        var(--cyber-pink),
+        var(--cyber-purple)
+    );
+}
+
+.playlist-scroller {
+    max-height: 450px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.music-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.music-card:hover,
+.music-card.active {
+    background: rgba(0,243,255,.12);
+    border-color: var(--cyber-cyan);
+    transform: scale(1.01);
+}
+
+.music-card img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--cyber-purple);
+}
+
+.track-info {
+    min-width: 0;
+}
+
+.track-name {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist-name {
+    color: #9f94b7;
+    font-size: .78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.center-hub {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hologram-disk-area {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hologram-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed var(--cyber-cyan);
+    border-radius: 50%;
+    opacity: .4;
+    animation: spin 20s linear infinite;
+}
+
+.main-vinyl {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 4px solid white;
+    background:
+        repeating-radial-gradient(
+            circle,
+            #050208 0,
+            #151020 3px,
+            #050208 6px
+        );
+    box-shadow: 0 0 40px var(--cyber-purple);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: spin 4s linear infinite;
+    animation-play-state: paused;
+}
+
+.vinyl-core {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        var(--cyber-pink),
+        var(--cyber-cyan)
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: .8rem;
+    box-shadow: inset 0 0 15px black;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.track-display {
+    width: 100%;
+}
+
+#trackTitle {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: white;
+}
+
+#trackArtist {
+    color: #9f94b7;
+    margin-top: 5px;
+}
+
+.pip-alert-box {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--cyber-cyan);
+    background: rgba(0,243,255,.08);
+    color: var(--cyber-cyan);
+    font-size: .85rem;
+}
+
+.control-cluster {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+.round-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 1.2rem;
+}
+
+.master-play {
+    width: 70px;
+    height: 70px;
+    font-size: 1.7rem;
+    background: linear-gradient(
+        45deg,
+        var(--cyber-pink),
+        var(--cyber-cyan)
+    );
+}
+
+.fx-rack {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.fx-row {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.fx-data-row {
+    display: flex;
+    justify-content: space-between;
+    color: #b8a9d0;
+    font-size: .82rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    background: rgba(255,255,255,.1);
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: var(--cyber-cyan);
+    box-shadow: 0 0 10px var(--cyber-cyan);
+    cursor: pointer;
+}
+
+.canvas-container {
+    width: 100%;
+    height: 90px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: rgba(0,0,0,.5);
+    border: 1px solid rgba(0,243,255,.2);
+}
+
+#audioCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.mode-grid button {
+    font-size: .75rem;
+    padding: 10px;
+}
+
+#pipVideoHacker {
+    position: fixed;
+    width: 320px;
+    height: 240px;
+    left: -9999px;
+    top: -9999px;
+}
+
+.status {
+    color: #8a7fa6;
+    font-size: .8rem;
+    text-align: center;
+}
+
+@media (max-width: 1150px) {
+    .universe-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .brand-title {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .cyber-panel {
+        padding: 17px;
+    }
+
+    .search-wrapper {
+        flex-direction: column;
+    }
+
+    .hologram-disk-area {
+        transform: scale(.85);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="nebula-bg"></div>
+
+<main class="universe-grid">
+
+    <h1 class="brand-title">
+        AETHER-AI QUANTUM MUSIC
+    </h1>
+
+    <!-- LEFT -->
+    <section class="cyber-panel">
+
+        <h2>🌐 Universal Sound Bank</h2>
+
+        <div class="search-wrapper">
+            <input
+                id="userInput"
+                type="text"
+                placeholder="ค้นหาศิลปินหรือเพลง..."
+                autocomplete="off"
+            >
+            <button id="searchAction" class="cyber-btn">
+                ค้นหา
+            </button>
+        </div>
+
+        <h2>🧠 AI Mood Sync Generator</h2>
+
+        <div class="mode-grid">
+            <button class="cyber-btn ai-btn" data-mood="cyberpunk electronic">
+                ⚡ CYBERPUNK
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="chillout ambient">
+                ☕ CHILLOUT
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="intense rock">
+                🎻 INTENSE
+            </button>
+
+            <button class="cyber-btn ai-btn" data-mood="party dance">
+                🚀 PARTY UP
+            </button>
+        </div>
+
+        <div class="status" id="searchStatus">
+            ระบบพร้อมค้นหาเพลง
+        </div>
+
+        <div
+            id="musicListContainer"
+            class="playlist-scroller"
+        ></div>
+
+    </section>
+
+
+    <!-- CENTER -->
+    <section class="cyber-panel center-hub">
+
+        <h2 style="width:100%;">
+            🔮 Core Quantum Player
+        </h2>
+
+        <div class="hologram-disk-area">
+
+            <div class="hologram-ring"></div>
+
+            <div id="vinylDisk" class="main-vinyl">
+
+                <div class="vinyl-core">
+                    AETHER<br>AI
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="track-display">
+            <div id="trackTitle">
+                READY FOR CONNECTION
+            </div>
+
+            <div id="trackArtist">
+                AETHER-AI MULTIVERSE SYSTEM
+            </div>
+        </div>
+
+        <div class="pip-alert-box">
+            💡 ระบบ Floating Mini-UI<br>
+            เปิดหน้าจอเครื่องเล่นลอยเหนือแอปอื่นได้
+        </div>
+
+        <button
+            id="pipActivationAction"
+            class="cyber-btn"
+            style="width:100%;"
+        >
+            🖥️ เปิดหน้าจอ UI ลอยตัว
+        </button>
+
+        <div class="control-cluster">
+
+            <button
+                id="prevTrackAction"
+                class="cyber-btn round-btn"
+            >
+                ⏮
+            </button>
+
+            <button
+                id="playToggleAction"
+                class="cyber-btn round-btn master-play"
+            >
+                ▶
+            </button>
+
+            <button
+                id="nextTrackAction"
+                class="cyber-btn round-btn"
+            >
+                ⏭
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- RIGHT -->
+    <section class="cyber-panel">
+
+        <h2>🎛️ AI Neural Equalizer Matrix</h2>
+
+        <div class="fx-rack">
+
+            <div class="fx-row">
+                <div class="fx-data-row">
+                    <span>🔊 MASTER OUTPUT</span>
+                    <span id="volMetric">80%</span>
+                </div>
+
+                <input
+                    id="volumeController"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="80"
+                >
+            </div>
+
+
+            <div class="fx-row">
+                <div class="fx-data-row">
+                    <span>🚀 TIMESTRETCH</span>
+                    <span id="speedMetric">1.0x</span>
+                </div>
+
+                <input
+                    id="speedController"
+                    type="range"
+                    min="50"
+                    max="200"
+                    value="100"
+                >
+            </div>
+
+
+            <div class="fx-row">
+                <div class="fx-data-row">
+                    <span>🧠 LOW-END BASS</span>
+                    <span id="bassMetric">0 dB</span>
+                </div>
+
+                <input
+                    class="neural-eq-node"
+                    data-freq="80"
+                    id="bassController"
+                    type="range"
+                    min="-12"
+                    max="12"
+                    value="0"
+                >
+            </div>
+
+
+            <div class="fx-row">
+                <div class="fx-data-row">
+                    <span>🎤 VOCAL MID</span>
+                    <span id="midMetric">0 dB</span>
+                </div>
+
+                <input
+                    class="neural-eq-node"
+                    data-freq="1000"
+                    id="midController"
+                    type="range"
+                    min="-12"
+                    max="12"
+                    value="0"
+                >
+            </div>
+
+
+            <div class="fx-row">
+                <div class="fx-data-row">
+                    <span>✨ CRYSTAL HIGH</span>
+                    <span id="highMetric">0 dB</span>
+                </div>
+
+                <input
+                    class="neural-eq-node"
+                    data-freq="8000"
+                    id="highController"
+                    type="range"
+                    min="-12"
+                    max="12"
+                    value="0"
+                >
+            </div>
+
+        </div>
+
+
+        <h2>🌌 Ambient Multi-Dimensional Sound</h2>
+
+        <div class="canvas-container">
+            <canvas id="audioCanvas"></canvas>
+        </div>
+
+        <div class="status">
+            ระบบเชื่อมต่อ Media Session API
+        </div>
+
+    </section>
+
+</main>
+
+
+<video
+    id="pipVideoHacker"
+    muted
+    autoplay
+    playsinline
+></video>
+
+
+<script>
+"use strict";
+
+/* =========================================================
+   AETHER-AI QUANTUM AUDIO ENGINE
+   ========================================================= */
+
+let contextAudio = null;
+let coreAudio = new Audio();
+
+coreAudio.crossOrigin = "anonymous";
+coreAudio.preload = "metadata";
+
+let nodeSource = null;
+let nodeGain = null;
+let nodeAnalyser = null;
+
+const filteringNetwork = {};
+
+let searchQueue = [];
+let systemCursor = 0;
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const playToggleAction =
+    document.getElementById("playToggleAction");
+
+const prevTrackAction =
+    document.getElementById("prevTrackAction");
+
+const nextTrackAction =
+    document.getElementById("nextTrackAction");
+
+const vinylDisk =
+    document.getElementById("vinylDisk");
+
+const userInput =
+    document.getElementById("userInput");
+
+const searchAction =
+    document.getElementById("searchAction");
+
+const musicListContainer =
+    document.getElementById("musicListContainer");
+
+const trackTitle =
+    document.getElementById("trackTitle");
+
+const trackArtist =
+    document.getElementById("trackArtist");
+
+const volumeController =
+    document.getElementById("volumeController");
+
+const speedController =
+    document.getElementById("speedController");
+
+const pipActivationAction =
+    document.getElementById("pipActivationAction");
+
+const pipVideoHacker =
+    document.getElementById("pipVideoHacker");
+
+const audioCanvas =
+    document.getElementById("audioCanvas");
+
+const glCtx =
+    audioCanvas.getContext("2d");
+
+const searchStatus =
+    document.getElementById("searchStatus");
+
+
+/* =========================================================
+   FLOATING PIP CANVAS
+   ========================================================= */
+
+const pipCanvasInvisible =
+    document.createElement("canvas");
+
+pipCanvasInvisible.width = 640;
+pipCanvasInvisible.height = 360;
+
+const pipCtx =
+    pipCanvasInvisible.getContext("2d");
+
+let mediaStreamFromCanvas = null;
+
+try {
+    mediaStreamFromCanvas =
+        pipCanvasInvisible.captureStream(15);
+
+    pipVideoHacker.srcObject =
+        mediaStreamFromCanvas;
+
+    pipVideoHacker.play().catch(() => {});
+} catch (error) {
+    console.warn("PiP Canvas unavailable:", error);
+}
+
+
+function updateFloatingCanvasUI() {
+
+    const width = pipCanvasInvisible.width;
+    const height = pipCanvasInvisible.height;
+
+    pipCtx.fillStyle = "#06020f";
+    pipCtx.fillRect(0, 0, width, height);
+
+    const gradient =
+        pipCtx.createLinearGradient(0, 0, width, height);
+
+    gradient.addColorStop(0, "#00f3ff");
+    gradient.addColorStop(.5, "#8a2be2");
+    gradient.addColorStop(1, "#ff0055");
+
+    pipCtx.strokeStyle =
+        coreAudio.paused ? "#ff0055" : gradient;
+
+    pipCtx.lineWidth = 5;
+
+    pipCtx.beginPath();
+
+    pipCtx.arc(
+        width / 2,
+        125,
+        75,
+        0,
+        Math.PI * 2
+    );
+
+    pipCtx.stroke();
+
+    pipCtx.fillStyle = "#ffffff";
+
+    pipCtx.font = "bold 25px Segoe UI";
+
+    pipCtx.textAlign = "center";
+
+    pipCtx.fillText(
+        "AETHER-AI",
+        width / 2,
+        132
+    );
+
+    pipCtx.fillStyle = "#00f3ff";
+
+    pipCtx.font = "bold 18px Segoe UI";
+
+    let title =
+        trackTitle.textContent || "READY";
+
+    let artist =
+        trackArtist.textContent || "AETHER-AI";
+
+    pipCtx.fillText(
+        title.substring(0, 35),
+        width / 2,
+        260
+    );
+
+    pipCtx.fillStyle = "#aaa0bd";
+
+    pipCtx.font = "15px Segoe UI";
+
+    pipCtx.fillText(
+        artist.substring(0, 40),
+        width / 2,
+        290
+    );
+
+    requestAnimationFrame(updateFloatingCanvasUI);
+}
+
+updateFloatingCanvasUI();
+
+
+/* =========================================================
+   PICTURE IN PICTURE
+   ========================================================= */
+
+pipActivationAction.onclick = async () => {
+
+    try {
+
+        if (!document.pictureInPictureEnabled) {
+            alert(
+                "เบราว์เซอร์นี้ไม่รองรับ Picture-in-Picture"
+            );
+            return;
+        }
+
+        if (document.pictureInPictureElement) {
+
+            await document.exitPictureInPicture();
+
+            pipActivationAction.textContent =
+                "🖥️ เปิดหน้าจอ UI ลอยตัว";
+
+        } else {
+
+            if (pipVideoHacker.readyState < 2) {
+                await pipVideoHacker.play().catch(() => {});
+            }
+
+            await pipVideoHacker.requestPictureInPicture();
+
+            pipActivationAction.textContent =
+                "📺 UI ลอยตัวกำลังทำงาน";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "ไม่สามารถเปิดหน้าจอลอยได้ กรุณาใช้ Chrome/Edge รุ่นใหม่"
+        );
+    }
+};
+
+
+/* =========================================================
+   AUDIO NODE SETUP
+   ========================================================= */
+
+function executeAudioNodeSetup() {
+
+    if (contextAudio) {
+        return;
+    }
+
+    const AudioContextClass =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+    if (!AudioContextClass) {
+
+        alert(
+            "เบราว์เซอร์นี้ไม่รองรับ Web Audio API"
+        );
+
+        return;
+    }
+
+    contextAudio =
+        new AudioContextClass();
+
+    nodeSource =
+        contextAudio.createMediaElementSource(coreAudio);
+
+    nodeGain =
+        contextAudio.createGain();
+
+    nodeAnalyser =
+        contextAudio.createAnalyser();
+
+    nodeAnalyser.fftSize = 256;
+
+    let bridgeNode = nodeSource;
+
+
+    document
+        .querySelectorAll(".neural-eq-node")
+        .forEach((slider) => {
+
+            const frequency =
+                Number(slider.dataset.freq);
+
+            const filter =
+                contextAudio.createBiquadFilter();
+
+            filter.frequency.value =
+                frequency;
+
+            filter.Q.value = 1;
+
+            if (frequency === 80) {
+
+                filter.type = "lowshelf";
+
+            } else if (frequency === 8000) {
+
+                filter.type = "highshelf";
+
+            } else {
+
+                filter.type = "peaking";
+            }
+
+            filter.gain.value =
+                Number(slider.value);
+
+            filteringNetwork[frequency] =
+                filter;
+
+            bridgeNode.connect(filter);
+
+            bridgeNode = filter;
+        });
+
+
+    bridgeNode.connect(nodeGain);
+
+    nodeGain.connect(nodeAnalyser);
+
+    nodeAnalyser.connect(
+        contextAudio.destination
+    );
+
+    nodeGain.gain.value =
+        Number(volumeController.value) / 100;
+
+    renderVisualizerWaves();
+}
+
+
+/* =========================================================
+   SEARCH APPLE / ITUNES MUSIC API
+   ========================================================= */
+
+async function connectGlobalSearchBank(query) {
+
+    const cleanQuery =
+        query.trim();
+
+    if (!cleanQuery) {
+        return;
+    }
+
+    searchStatus.textContent =
+        "📡 กำลังค้นหาเพลง...";
+
+    musicListContainer.innerHTML =
+        `
+        <div style="
+            text-align:center;
+            padding:20px;
+            color:#00f3ff;
+        ">
+            🔮 กำลังเชื่อมต่อ Sound Bank...
+        </div>
+        `;
+
+    try {
+
+        const url =
+            "https://itunes.apple.com/search?" +
+            new URLSearchParams({
+                term: cleanQuery,
+                limit: "25",
+                media: "music",
+                entity: "song"
+            });
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP " + response.status
+            );
+        }
+
+        const json =
+            await response.json();
+
+        searchQueue =
+            (json.results || [])
+                .filter(track =>
+                    track.previewUrl
+                );
+
+        systemCursor = 0;
+
+        if (searchQueue.length === 0) {
+
+            musicListContainer.innerHTML =
+                `
+                <div style="
+                    text-align:center;
+                    padding:20px;
+                    color:#ff0055;
+                ">
+                    ❌ ไม่พบเพลงที่มี Preview
+                </div>
+                `;
+
+            searchStatus.textContent =
+                "ไม่พบผลลัพธ์";
+
+            return;
+        }
+
+        searchStatus.textContent =
+            `พบ ${searchQueue.length} เพลง`;
+
+        refreshPlaylistUI();
+
+    } catch (error) {
+
+        console.error(
+            "Music Search Error:",
+            error
+        );
+
+        musicListContainer.innerHTML =
+            `
+            <div style="
+                text-align:center;
+                padding:20px;
+                color:#ff0055;
+            ">
+                ❌ เชื่อมต่อ Sound Bank ไม่สำเร็จ
+                <br>
+                <small>
+                    กรุณาตรวจสอบอินเทอร์เน็ต
+                </small>
+            </div>
+            `;
+
+        searchStatus.textContent =
+            "Connection Error";
+    }
+}
+
+
+/* =========================================================
+   PLAYLIST UI
+   ========================================================= */
+
+function refreshPlaylistUI() {
+
+    musicListContainer.innerHTML = "";
+
+    searchQueue.forEach(
+        (track, index) => {
+
+            const node =
+                document.createElement("div");
+
+            node.className =
+                "music-card" +
+                (index === systemCursor
+                    ? " active"
+                    : "");
+
+            const image =
+                track.artworkUrl100 ||
+                "https://placehold.co/100x100/06020f/00f3ff?text=AI";
+
+            node.innerHTML = `
+                <img
+                    src="${image}"
+                    alt=""
+                    loading="lazy"
+                >
+
+                <div class="track-info">
+                    <div class="track-name">
+                        ${escapeHTML(
+                            track.trackName ||
+                            "Unknown Track"
+                        )}
+                    </div>
+
+                    <div class="artist-name">
+                        ${escapeHTML(
+                            track.artistName ||
+                            "Unknown Artist"
+                        )}
+                    </div>
+                </div>
+            `;
+
+            node.onclick = () =>
+                commandTrackPlay(index);
+
+            musicListContainer.appendChild(node);
+        }
+    );
+}
+
+
+/* =========================================================
+   HTML SAFE TEXT
+   ========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =========================================================
+   PLAY TRACK
+   ========================================================= */
+
+async function commandTrackPlay(index) {
+
+    if (!searchQueue[index]) {
+        return;
+    }
+
+    executeAudioNodeSetup();
+
+    if (!contextAudio) {
+        return;
+    }
+
+    if (contextAudio.state === "suspended") {
+
+        await contextAudio.resume();
+    }
+
+    systemCursor = index;
+
+    const currentSelection =
+        searchQueue[index];
+
+    coreAudio.src =
+        currentSelection.previewUrl;
+
+    coreAudio.load();
+
+    trackTitle.textContent =
+        currentSelection.trackName ||
+        "Unknown Track";
+
+    trackArtist.textContent =
+        currentSelection.artistName ||
+        "Unknown Artist";
+
+    coreAudio.playbackRate =
+        Number(speedController.value) / 100;
+
+    try {
+
+        await coreAudio.play();
+
+        playToggleAction.textContent =
+            "⏸";
+
+        vinylDisk.style.animationPlayState =
+            "running";
+
+        syncMediaSessionGlobalAPI(
+            currentSelection
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Playback Error:",
+            error
+        );
+    }
+
+    document
+        .querySelectorAll(".music-card")
+        .forEach((card, idx) => {
+
+            card.classList.toggle(
+                "active",
+                idx === index
+            );
+        });
+}
+
+
+/* =========================================================
+   AI MOOD
+   ========================================================= */
+
+function triggerAIMood(moodKeywords) {
+
+    userInput.value =
+        moodKeywords;
+
+    connectGlobalSearchBank(
+        moodKeywords
+    );
+}
+
+
+/* =========================================================
+   MEDIA SESSION API
+   ========================================================= */
+
+function syncMediaSessionGlobalAPI(track) {
+
+    if (!("mediaSession" in navigator)) {
+        return;
+    }
+
+    try {
+
+        const artwork =
+            track.artworkUrl100
+                ? [{
+                    src: track.artworkUrl100,
+                    sizes: "100x100",
+                    type: "image/jpeg"
+                }]
+                : [];
+
+        navigator.mediaSession.metadata =
+            new MediaMetadata({
+                title:
+                    track.trackName || "AETHER",
+                artist:
+                    track.artistName || "AETHER-AI",
+                album:
+                    "Quantum AI Network",
+                artwork
+            });
+
+
+        navigator.mediaSession.setActionHandler(
+            "play",
+            () => playCurrent()
+        );
+
+        navigator.mediaSession.setActionHandler(
+            "pause",
+            () => pauseCurrent()
+        );
+
+        navigator.mediaSession.setActionHandler(
+            "previoustrack",
+            () => previousTrack()
+        );
+
+        navigator.mediaSession.setActionHandler(
+            "nexttrack",
+            () => nextTrack()
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Media Session:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+   ========================================================= */
+
+async function playCurrent() {
+
+    if (!coreAudio.src) {
+        return;
+    }
+
+    executeAudioNodeSetup();
+
+    if (
+        contextAudio &&
+        contextAudio.state === "suspended"
+    ) {
+        await contextAudio.resume();
+    }
+
+    try {
+
+        await coreAudio.play();
+
+        playToggleAction.textContent =
+            "⏸";
+
+        vinylDisk.style.animationPlayState =
+            "running";
+
+    } catch (error) {
+
+        console.error(error);
+    }
+}
+
+
+function pauseCurrent() {
+
+    coreAudio.pause();
+
+    playToggleAction.textContent =
+        "▶";
+
+    vinylDisk.style.animationPlayState =
+        "paused";
+}
+
+
+playToggleAction.onclick = () => {
+
+    if (!coreAudio.src) {
+        return;
+    }
+
+    if (coreAudio.paused) {
+
+        playCurrent();
+
+    } else {
+
+        pauseCurrent();
+    }
+};
+
+
+/* =========================================================
+   NEXT / PREVIOUS
+   ========================================================= */
+
+function nextTrack() {
+
+    if (searchQueue.length === 0) {
+        return;
+    }
+
+    commandTrackPlay(
+        (systemCursor + 1) %
+        searchQueue.length
+    );
+}
+
+
+function previousTrack() {
+
+    if (searchQueue.length === 0) {
+        return;
+    }
+
+    commandTrackPlay(
+        (systemCursor - 1 +
+            searchQueue.length) %
+        searchQueue.length
+    );
+}
+
+
+nextTrackAction.onclick =
+    nextTrack;
+
+prevTrackAction.onclick =
+    previousTrack;
+
+
+coreAudio.onended =
+    nextTrack;
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+searchAction.onclick = () => {
+
+    const query =
+        userInput.value.trim();
+
+    if (query) {
+        connectGlobalSearchBank(query);
+    }
+};
+
+
+userInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Enter") {
+            searchAction.click();
+        }
+    }
+);
+
+
+/* =========================================================
+   VOLUME
+   ========================================================= */
+
+volumeController.oninput = event => {
+
+    const value =
+        Number(event.target.value);
+
+    document.getElementById(
+        "volMetric"
+    ).textContent =
+        value + "%";
+
+    if (nodeGain) {
+
+        nodeGain.gain.value =
+            value / 100;
+    }
+};
+
+
+/* =========================================================
+   PLAYBACK SPEED
+   ========================================================= */
+
+speedController.oninput = event => {
+
+    const value =
+        Number(event.target.value) / 100;
+
+    document.getElementById(
+        "speedMetric"
+    ).textContent =
+        value.toFixed(1) + "x";
+
+    coreAudio.playbackRate =
+        value;
+};
+
+
+/* =========================================================
+   EQ CONTROLS
+   ========================================================= */
+
+document
+    .querySelectorAll(".neural-eq-node")
+    .forEach(slider => {
+
+        slider.oninput = event => {
+
+            const freq =
+                Number(
+                    event.target.dataset.freq
+                );
+
+            const value =
+                Number(event.target.value);
+
+            if (filteringNetwork[freq]) {
+
+                filteringNetwork[freq]
+                    .gain.value = value;
+            }
+
+            if (freq === 80) {
+
+                document.getElementById(
+                    "bassMetric"
+                ).textContent =
+                    value + " dB";
+
+            } else if (freq === 1000) {
+
+                document.getElementById(
+                    "midMetric"
+                ).textContent =
+                    value + " dB";
+
+            } else if (freq === 8000) {
+
+                document.getElementById(
+                    "highMetric"
+                ).textContent =
+                    value + " dB";
+            }
+        };
+    });
+
+
+/* =========================================================
+   VISUALIZER
+   ========================================================= */
+
+function renderVisualizerWaves() {
+
+    function loop() {
+
+        requestAnimationFrame(loop);
+
+        if (!nodeAnalyser) {
+            return;
+        }
+
+        const width =
+            audioCanvas.clientWidth;
+
+        const height =
+            audioCanvas.clientHeight;
+
+        if (
+            audioCanvas.width !== width ||
+            audioCanvas.height !== height
+        ) {
+
+            audioCanvas.width =
+                width || 300;
+
+            audioCanvas.height =
+                height || 90;
+        }
+
+        const binCount =
+            nodeAnalyser.frequencyBinCount;
+
+        const audioWaveData =
+            new Uint8Array(binCount);
+
+        nodeAnalyser.getByteFrequencyData(
+            audioWaveData
+        );
+
+        glCtx.fillStyle =
+            "rgba(6,2,15,.25)";
+
+        glCtx.fillRect(
+            0,
+            0,
+            audioCanvas.width,
+            audioCanvas.height
+        );
+
+        const barWidth =
+            audioCanvas.width / binCount;
+
+        for (
+            let i = 0;
+            i < binCount;
+            i++
+        ) {
+
+            const amplitude =
+                audioWaveData[i] / 255;
+
+            const barHeight =
+                amplitude *
+                audioCanvas.height;
+
+            const hue =
+                180 +
+                amplitude * 150;
+
+            glCtx.fillStyle =
+                `hsla(${hue},100%,60%,.85)`;
+
+            glCtx.fillRect(
+                i * barWidth,
+                audioCanvas.height -
+                    barHeight,
+                Math.max(
+                    1,
+                    barWidth - 1
+                ),
+                barHeight
+            );
+        }
+    }
+
+    loop();
+}
+
+
+/* =========================================================
+   AI MOOD BUTTONS
+   ========================================================= */
+
+document
+    .querySelectorAll("[data-mood]")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                triggerAIMood(
+                    button.dataset.mood
+                );
+            }
+        );
+    });
+
+
+/* =========================================================
+   KEYBOARD CONTROLS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.target.tagName ===
+            "INPUT"
+        ) {
+            return;
+        }
+
+        if (event.code === "Space") {
+
+            event.preventDefault();
+
+            playToggleAction.click();
+
+        } else if (
+            event.code === "ArrowRight"
+        ) {
+
+            nextTrack();
+
+        } else if (
+            event.code === "ArrowLeft"
+        ) {
+
+            previousTrack();
+        }
+    }
+);
+
+
+/* =========================================================
+   INITIAL SEARCH
+   ========================================================= */
+
+connectGlobalSearchBank(
+    "edm hit"
+);
+
+</script>
+
+</body>
+</html>
